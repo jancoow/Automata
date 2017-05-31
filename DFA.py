@@ -37,28 +37,52 @@ class DFA:
         if type(other) is not DFA:
             return NotImplemented
 
+        start = 0
+        finals = []
+        transitions = {}
+
         # combined the alphabet
         alphabet = self.alphabet + [i for i in other.alphabet if i not in self.alphabet]
-        start = 0
-
-        # We need to combine the transitions but we can't have duplicate states,
-        # so we need to modify all the state numbers
-        # transitions = {}
-
-        transitions = []
-
-        start = (self.start, other.start)
-        transitions.append(start)
-
-        transitions.append(   (self.transitions[(, 'a')], other.transitions[('1', 'a')]   )
-
-
 
         for nda_1_state in self.transitions:
             for nda_2_state in other.transitions:
-                print(nda_1_state[0] + "," + nda_2_state[0] + "  --  " + nda_1_state[1] + " deze letter moet naar.. ")
-                print(self.transitions[nda_1_state] + "-" + other.transitions[nda_2_state])
-                print()
-                pass
+                if nda_2_state[1] == nda_1_state[1]:
+                    new_state = nda_1_state[0] + "," + nda_2_state[0]
+                    transitions[(new_state, nda_1_state[1])] = self.transitions[nda_1_state] + "," + other.transitions[nda_2_state]
 
+                    # If both states are the start state
+                    if nda_1_state[0] == self.start and nda_2_state[0] == other.start:
+                        start = new_state
 
+                    # If both states are the final state
+                    if nda_1_state[0] in self.finals and nda_2_state[0] in other.finals and new_state not in finals:
+                        finals.append(new_state)
+
+        return DFA(alphabet, transitions, start, finals)
+
+    def __or__(self, other):
+        if type(other) is not DFA:
+            return NotImplemented
+
+        start = 0
+        finals = []
+        transitions = {}
+
+        # combined the alphabet
+        alphabet = self.alphabet + [i for i in other.alphabet if i not in self.alphabet]
+
+        for nda_1_state in self.transitions:
+            for nda_2_state in other.transitions:
+                if nda_2_state[1] == nda_1_state[1]: # Only continue if Nda1 state alphabet is equal as ours
+                    new_state = nda_1_state[0] + "," + nda_2_state[0]
+                    transitions[(new_state, nda_1_state[1])] = self.transitions[nda_1_state] + "," + other.transitions[nda_2_state]
+
+                    # If both states are the start state
+                    if nda_1_state[0] == self.start and nda_2_state[0] == other.start:
+                        start = new_state
+
+                    # If one of the states is the final state
+                    if (nda_1_state[0] in self.finals or nda_2_state[0] in other.finals) and new_state not in finals:
+                        finals.append(new_state)
+
+        return DFA(alphabet, transitions, start, finals)

@@ -72,7 +72,9 @@ if __name__ == "__main__":
     dfa1 = DFA(alphabet, transitions_dfa_1, start_dfa_1, finals_dfa_1)
     dfa2 = DFA(alphabet, transitions_dfa_2, start_dfa_2, finals_dfa_2)
 
-    dfa3 = dfa1 & dfa2
+    dfa3 = dfa1 | dfa2
+    print(dfa3.start)
+    print(dfa3.finals)
     dfa3.get_graph("dfa-3")
 
     # ----------------------------- #
