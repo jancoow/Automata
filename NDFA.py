@@ -28,8 +28,15 @@ class NDFA:
         for key, value in self.transitions.items():
             for t in value:
                 label = key[1]
+
+                # If this state transition already exist we should combine the label.
                 if graph.get_edge_data(key[0], t):
                     label += "," + graph.get_edge_data(key[0], t)["label"]
+
+                # If this state is an end state
+                if key[0] in self.finals:
+                    graph.add_node(key[0], shape="doublecircle")
+
                 graph.add_edge(key[0], t, label=label)
 
         # trick for labeling

@@ -20,10 +20,20 @@ class DFA:
         graph = nx.DiGraph()
         for key, value in self.transitions.items():
             label = key[1]
+
             # If this state transition already exist we should combine the label.
             if graph.get_edge_data(key[0], value):
                 label += "," + graph.get_edge_data(key[0], value)["label"]
+
+            # If this state is an end state
+            if key[0] in self.finals:
+                graph.add_node(key[0], shape="doublecircle")
+
             graph.add_edge(key[0], value, label=label)
+
+        # Add start arrow
+        graph.add_node(' ', shape="point")
+        graph.add_edge(' ', self.start)
 
         # trick for labeling
         for u, v, d in graph.edges(data=True):
