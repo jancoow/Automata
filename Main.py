@@ -21,6 +21,7 @@ if __name__ == "__main__":
     print(dfa.accept("aa"))
     dfa.get_graph("dfa")
 
+
     # ----------------------------- #
     # Example 2 #
     # Simple NDFA #
@@ -77,6 +78,39 @@ if __name__ == "__main__":
     dfa1.get_graph("dfa-1")
     dfa2.get_graph("dfa-2")
     dfa3.get_graph("dfa-3")
+
+    # ----------------------------- #
+    # Example 4 #
+    # DFA minimisation
+    # DFA minimisation using  Myphill-Nerode Theorem  #
+    # ----------------------------- #
+    alphabet = ['a', 'b']
+    transitions = {
+        ('A', 'a'): 'B',
+        ('A', 'b'): 'C',
+        ('B', 'a'): 'A',
+        ('B', 'b'): 'D',
+        ('C', 'a'): 'E',
+        ('C', 'b'): 'F',
+        ('D', 'a'): 'E',
+        ('D', 'b'): 'F',
+        ('E', 'a'): 'E',
+        ('E', 'b'): 'F',
+        ('F', 'a'): 'F',
+        ('F', 'b'): 'F',
+
+    }
+
+    start = 'A'
+    finals = ['C', 'D', 'E']
+
+    dfa = DFA(alphabet, transitions, start, finals)
+    dfa.get_graph("dfa-before")
+    minimized_dfa = dfa.minimize()
+
+    minimized_dfa.get_graph("test")
+
+
 
     # ----------------------------- #
     # Example 3 #

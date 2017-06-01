@@ -16,6 +16,82 @@ class DFA:
             state = self.transitions[(state, char)]
         return state in self.finals
 
+    def minimize(self):
+        pairs = {}
+
+        # Step 1 - create all pair of states & Step 2 - Mark state pairs
+        for t1 in self.transitions:
+            for t2 in self.transitions:
+                # Using frozenset for removing duplicates
+                combination = frozenset((t1[0], t2[0]))
+                if t1[0] != t2[0]:
+                    pairs[combination] = 0
+                    # If one of the states in in final state we can mark them.
+                    if (t1[0] in self.finals and t2[0] not in self.finals) or (
+                            t1[0] not in self.finals and t2[0] in self.finals):
+                        pairs[combination] = 1
+
+        # Step 3 - Mark more state pairs until we don't find anymore states
+        pairs_found = 1
+        while pairs_found > 0:
+            pairs_found = 0
+            for pair in pairs:
+                if pairs[pair] is 0:
+                    for char in self.alphabet:
+                        new_pair = set()
+                        for s in pair:
+                            new_pair.add(self.transitions[(s, char)])
+                        new_pair = frozenset(new_pair)
+                        if new_pair in pairs and pairs[new_pair] == 1:
+                            pairs[pair] = 1
+                            pairs_found += 1
+                            break
+
+        # Step 4 - Combine the pairs into the new states
+        new_states = []
+        for pair in pairs:
+            if pairs[pair] is 0:
+                is_added = False
+                for new_state in new_states:
+                    if len(pair.intersection(new_state)) > 0:
+                        new_state.update(pair)
+                        is_added = True
+                        break
+                if not is_added:
+                    new_states.append(set(pair))
+
+        # Step 5 - Creating new dfa
+        transitions = {}
+        finals = []
+        start = 0
+
+        for new_state in new_states:
+            for char in self.alphabet:
+                next_state = self.transitions[(next(iter(new_state)), char)]
+
+                state_found = False
+                for s in new_states:
+                    if next_state in s:
+                        next_state = s
+                        state_found = True
+                        break
+
+                if not state_found:
+                    new_states.append({next_state})
+                    next_state = {next_state}
+
+                transitions[(','.join(new_state), char)] = ','.join(next_state)
+
+            # Check if state is a final state
+            if len(new_state.intersection(self.finals)) > 0:
+                finals.append(','.join(new_state))
+
+            # Check if the state is a start state
+            if self.start in new_state:
+                start = ','.join(new_state)
+
+        return DFA(self.alphabet, transitions, start, finals)
+
     def get_graph(self, name="output"):
         graph = nx.DiGraph()
         for key, value in self.transitions.items():
