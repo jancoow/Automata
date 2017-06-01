@@ -55,10 +55,15 @@ class DFA:
                 for new_state in new_states:
                     if len(pair.intersection(new_state)) > 0:
                         new_state.update(pair)
+
                         is_added = True
                         break
                 if not is_added:
                     new_states.append(set(pair))
+
+        # If there are no new states created, then we can't minimize it and return the current object
+        if len(new_states) == 0:
+            return self
 
         # Step 5 - Creating new dfa
         transitions = {}
@@ -80,15 +85,15 @@ class DFA:
                     new_states.append({next_state})
                     next_state = {next_state}
 
-                transitions[(','.join(new_state), char)] = ','.join(next_state)
+                transitions[(','.join(sorted(new_state)), char)] = ','.join(sorted(next_state))
 
             # Check if state is a final state
             if len(new_state.intersection(self.finals)) > 0:
-                finals.append(','.join(new_state))
+                finals.append(','.join(sorted(new_state)))
 
             # Check if the state is a start state
             if self.start in new_state:
-                start = ','.join(new_state)
+                start = ','.join(sorted(new_state))
 
         return DFA(self.alphabet, transitions, start, finals)
 

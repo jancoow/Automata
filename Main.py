@@ -21,7 +21,6 @@ if __name__ == "__main__":
     print(dfa.accept("aa"))
     dfa.get_graph("dfa")
 
-
     # ----------------------------- #
     # Example 2 #
     # Simple NDFA #
