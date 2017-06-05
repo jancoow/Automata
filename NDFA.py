@@ -1,5 +1,4 @@
-import networkx as nx
-
+#import networkx as nx
 
 class NDFA:
     def __init__(self, alphabet, transitions, start, finals):

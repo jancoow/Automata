@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     dfa = DFA(alphabet, transitions, start, finals)
     print(dfa.accept("aa"))
-    dfa.get_graph("dfa")
+#    dfa.get_graph("dfa")
 
     # ----------------------------- #
     # Example 2 #
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     ndfa = NDFA(alphabet, transitions, start, finals)
     print(ndfa.accept("aba"))
-    ndfa.get_graph("ndfa")
+ #   ndfa.get_graph("ndfa")
 
     # ----------------------------- #
     # Example 3 #
@@ -74,9 +74,9 @@ if __name__ == "__main__":
 
     dfa3 = dfa1 | dfa2
 
-    dfa1.get_graph("dfa-1")
-    dfa2.get_graph("dfa-2")
-    dfa3.get_graph("dfa-3")
+#    dfa1.get_graph("dfa-1")
+#    dfa2.get_graph("dfa-2")
+#    dfa3.get_graph("dfa-3")
 
     # ----------------------------- #
     # Example 4 #
@@ -104,10 +104,10 @@ if __name__ == "__main__":
     finals = ['C', 'D', 'E']
 
     dfa = DFA(alphabet, transitions, start, finals)
-    dfa.get_graph("dfa-before")
+#    dfa.get_graph("dfa-before")
     minimized_dfa = dfa.minimize()
 
-    minimized_dfa.get_graph("test")
+#    minimized_dfa.get_graph("test")
 
 
 
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     #     (1, 'b'): [0],
     #     (1, 'b'): [1],
     # }
-    # start_2 = 0
+    # stff iart_2 = 0
     # finals_2 = [1]
     # ndfa_2 = NDFA(alphabet, transitions_2, start_2, finals_2)
     # ndfa_2.get_graph("ndfa-2")
