@@ -67,12 +67,23 @@ class Regex:
                     (ndfa.finals[0], '$'): [ndfa.finals[0] + 2, ndfa.start],
                     (ndfa.start, '$'): [ndfa.finals[0] + 2]
                 }
-                ndfa.transitions.update(temptransitions)
+
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+
                 ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
 
             elif token[0] is "DOT":
                 temptransitions = {(ndfa.finals[0], '$') : [ndfa.finals[0] + 1]}
-                ndfa.transitions.update(temptransitions)
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+
                 ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
                 self.DOT()
             elif token[0] is "PLUS":
@@ -81,11 +92,22 @@ class Regex:
                     (ndfa.finals[0] + 1, '$') : [ndfa.start],
                     (ndfa.finals[0], '$') : [ndfa.finals[0] + 2, ndfa.start]
                 }
-                ndfa.transitions.update(temptransitions)
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+
                 ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
             elif token[0] is "CHAR":
                 temptransitions = {(ndfa.finals[0], token[1]) : [ndfa.finals[0] + 1]}
-                ndfa.transitions.update(temptransitions)
+
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+
                 ndfa = NDFA(alphabet,ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
         #transitions = {
             # (0, 'a'): [0, 1],
@@ -94,7 +116,6 @@ class Regex:
             # (1, 'b'): [1],
             # (0, '$'): [1],
         #}
-        finals = [0]
 
         print(transitions)
         return ndfa
