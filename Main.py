@@ -1,7 +1,16 @@
 from DFA import DFA
 from NDFA import NDFA
+from Regex import Regex
 
 if __name__ == "__main__":
+    #REGEX TEST
+    regex = Regex("a(a|b)*a.bb")
+    regex.to_ndfa()
+
+    exit()
+
+
+
     # ----------------------------- #
     # Example 1 #
     # Simple DFA #
@@ -106,6 +115,9 @@ if __name__ == "__main__":
     dfa = DFA(alphabet, transitions, start, finals)
 #    dfa.get_graph("dfa-before")
     minimized_dfa = dfa.minimize()
+
+
+
 
 #    minimized_dfa.get_graph("test")
 

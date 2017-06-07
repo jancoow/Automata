@@ -1,0 +1,103 @@
+from NDFA import NDFA
+class Regex:
+    def __init__(self, regex):
+        self.regex = regex
+        self.symbols = {'(': 'Haakje open',
+                        ')': 'Haakje sluiten',
+                        '*': 'STAR',
+                        '|': 'OR',
+                        '.': 'DOT',
+                        '+': 'PLUS'}
+        self.tokens = []
+
+        self.parse_tokens()
+
+    def parse_tokens(self):
+        for c in self.regex:
+            if c not in self.symbols.keys(): # It's not a symbol so it's a char
+                self.tokens.append(('CHAR', c))
+            else:
+                self.tokens.append((self.symbols[c], c))
+        print(self.tokens)
+
+    def OR(self):
+
+        pass
+
+    def DOT(self):
+        pass
+
+    def STAR(self):
+        pass
+
+    def PLUS(self):
+        pass
+
+    def check_language(self, language):
+        pass
+
+    def to_ndfa(self):
+        alphabet = set()
+        for token in self.tokens:
+            if token[0] is 'CHAR':
+                alphabet.add(token[1])
+        alphabet = sorted(alphabet)
+
+        start = 0
+
+        finals = [0]
+
+        transitions = {}
+
+        ndfa = NDFA(alphabet, transitions, start, finals)
+
+        for token in self.tokens:
+            if token[0] is "OR":
+                self.OR()
+                temptransitions = {
+                    (ndfa.finals[0] + 1, '$') : [ndfa.start, ndfa.finals[0] + 2]
+                }
+                ndfa.transitions.update(temptransitions)
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
+
+            elif token[0] is "STAR":
+                self.STAR()
+                temptransitions = {
+                    (ndfa.finals[0] + 1, '$'): [ndfa.start],
+                    (ndfa.finals[0], '$'): [ndfa.finals[0] + 2, ndfa.start],
+                    (ndfa.start, '$'): [ndfa.finals[0] + 2]
+                }
+                ndfa.transitions.update(temptransitions)
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
+
+            elif token[0] is "DOT":
+                temptransitions = {(ndfa.finals[0], '$') : [ndfa.finals[0] + 1]}
+                ndfa.transitions.update(temptransitions)
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
+                self.DOT()
+            elif token[0] is "PLUS":
+                self.PLUS()
+                temptransitions = {
+                    (ndfa.finals[0] + 1, '$') : [ndfa.start],
+                    (ndfa.finals[0], '$') : [ndfa.finals[0] + 2, ndfa.start]
+                }
+                ndfa.transitions.update(temptransitions)
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
+            elif token[0] is "CHAR":
+                temptransitions = {(ndfa.finals[0], token[1]) : [ndfa.finals[0] + 1]}
+                ndfa.transitions.update(temptransitions)
+                ndfa = NDFA(alphabet,ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
+        #transitions = {
+            # (0, 'a'): [0, 1],
+            # (1, 'b'): [0],
+            # (2, 'a'): [2],
+            # (1, 'b'): [1],
+            # (0, '$'): [1],
+        #}
+        finals = [0]
+
+        print(transitions)
+        return ndfa
+
+
+
