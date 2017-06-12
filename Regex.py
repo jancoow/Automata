@@ -51,14 +51,36 @@ class Regex:
 
         ndfa = NDFA(alphabet, transitions, start, finals)
 
+        orend = False
+        orendstate = 0
+
         for token in self.tokens:
+            if orend and (token[0] != "CHAR"):
+                temptransitions = {
+                    (ndfa.finals[0], '$') : [ndfa.finals[0] + 1],
+                    (orendstate, '$') : [ndfa.finals[0] + 1]
+                }
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
+                orend = False
+
             if token[0] is "OR":
                 self.OR()
                 temptransitions = {
                     (ndfa.finals[0] + 1, '$') : [ndfa.start, ndfa.finals[0] + 2]
                 }
-                ndfa.transitions.update(temptransitions)
+                orendstate = ndfa.finals[0]
+                for temp_transition in temptransitions:
+                    if temp_transition in ndfa.transitions.keys():
+                        ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                    else:
+                        ndfa.transitions[temp_transition] = temptransitions[temp_transition]
                 ndfa = NDFA(alphabet, ndfa.transitions, ndfa.finals[0] + 1, [ndfa.finals[0] + 2])
+                orend = True
 
             elif token[0] is "STAR":
                 self.STAR()
