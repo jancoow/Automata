@@ -88,7 +88,7 @@ class Regex:
                 self.STAR()
                 temptransitions = {
                     (ndfa.finals[0] + 1, '$'): [ndfa.start],
-                    (ndfa.finals[0], '$'): [ndfa.finals[0] + 2, ndfa.start],
+                    (ndfa.finals[0], '$'): [ndfa.finals[0] + 2, ndfa.finals[0] + 1],
                     (ndfa.start, '$'): [ndfa.finals[0] + 2]
                 }
 
@@ -133,6 +133,20 @@ class Regex:
                         ndfa.transitions[temp_transition] = temptransitions[temp_transition]
 
                 ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
+
+        if orend:
+            final = ndfa.finals[0] + 1
+            temptransitions = {
+                (ndfa.finals[0], '$'): [final],
+                (orendstate, '$'): [final]
+            }
+            for temp_transition in temptransitions:
+                if temp_transition in ndfa.transitions.keys():
+                    ndfa.transitions[temp_transition].extend(temptransitions[temp_transition])
+                else:
+                    ndfa.transitions[temp_transition] = temptransitions[temp_transition]
+            ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [final])
+            orend = False
         #transitions = {
             # (0, 'a'): [0, 1],
             # (1, 'b'): [0],
