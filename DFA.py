@@ -1,3 +1,4 @@
+import itertools
 import networkx as nx
 
 from NDFA import NDFA
@@ -205,6 +206,22 @@ class DFA:
             if s[0] not in self.finals:
                 finals.add(s[0])
         return DFA(self.alphabet, self.transitions, self.start, finals)
+
+    def generate_words(self, length=5):
+        """
+        Generate a list of words which are accepted and not accepted
+        """
+        accepted = []
+        not_accepted = []
+        for i in range(1, length):
+            for combination in list(itertools.product(['a', 'b'], repeat=i)):
+                str_combination = ''.join(combination)
+                if self.accept(combination):
+                    accepted.append(str_combination)
+                else:
+                    not_accepted.append(str_combination)
+        return accepted, not_accepted
+
 
     def get_graph(self, name="output", current_state=None):
         """

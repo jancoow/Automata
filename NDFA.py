@@ -1,3 +1,4 @@
+import itertools
 import networkx as nx
 
 
@@ -112,6 +113,21 @@ class NDFA:
                         deleted += 1
 
         return DFA(self.alphabet, dfa_transitions, start_state, final_states)
+
+    def generate_words(self, length=5):
+        """
+        Generate a list of words which are accepted and not accepted
+        """
+        accepted = []
+        not_accepted = []
+        for i in range(1, length):
+            for combination in list(itertools.product(['a', 'b'], repeat=i)):
+                str_combination = ''.join(combination)
+                if self.accept(combination):
+                    accepted.append(str_combination)
+                else:
+                    not_accepted.append(str_combination)
+        return accepted, not_accepted
 
     def get_graph(self, name="output", current_states=None):
         """
