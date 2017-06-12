@@ -30,8 +30,8 @@ class NDFA:
                 states.extend(self.transitions[(state, '$')])
             if (state, char) in self.transitions:  # Normal transition
                 new_states |= set(self.transitions[(state, char)])
-            else:  # There is no transition found, so we are staying in our current state
-                new_states |= set(state)
+            else:  # There is no transition found, so this path dies
+                pass
         return list(new_states)
 
     def get_tuple_string(self):
@@ -56,61 +56,36 @@ class NDFA:
 
         def create_new_state(states):
             name = ','.join(sorted(states))
-            for s in states:
-                for char in self.alphabet:
-                    # Merge all the outputs from individual states in a set
-                    if (s, char) in self.transitions:
-                        if (name, char) in dfa_transitions:
-                            if type(dfa_transitions[(name, char)]) != set:
-                                dfa_transitions[(name, char)] = set(dfa_transitions[(name, char)].split(','))
-                            dfa_transitions[(name, char)] |= set(self.transitions[(s, char)])
-                        else:
-                            dfa_transitions[(name, char)] = set(self.transitions[(s, char)])
 
-            # Change set array to a string name
-            for char in self.alphabet:
-                if (name, char) in dfa_transitions:
-                    new_state_name = ','.join(sorted(dfa_transitions[(name, char)]))
+            if not any(i[0] == name for i in dfa_transitions):
+                # Check final state
+                if len(set(states).intersection(self.finals)) > 0:
+                    final_states.add(name)
 
-                    # If the state name doesn't exist yet we need to create it
-                    if not any(i[0] == new_state_name for i in dfa_transitions):
-                        create_new_state(dfa_transitions[(name, char)])
-                    # Check if this state could be a final state
-                    if len(dfa_transitions[(name, char)].intersection(self.finals)) > 0:
-                        final_states.add(new_state_name)
+                next_states = {key: set() for key in [char for char in self.alphabet]}
+                states = list(states)
+                for s in states:  # Search next states
+                    if (s, '$') in self.transitions:
+                        states.extend(self.transitions[(s, '$')])
+                    for char in self.alphabet:
+                        if (s, char) in self.transitions:
+                            next_states[char] |= set(self.transitions[(s, char)])
 
-                    dfa_transitions[(name, char)] = new_state_name
+                for s in next_states:  # Create next states
+                    next_state = ','.join(sorted(next_states[s]))
+                    if next_state == '':
+                        dfa_transitions[(name, s)] = '{}'
+                    else:
+                        dfa_transitions[(name, s)] = next_state
+                        create_new_state(next_states[s])
 
         # Generate the new states
-        for transition in self.transitions:
-            next_state = self.transitions[transition]
-            if len(next_state) > 1:  # New state detected
-                create_new_state(next_state)
-            # Check if this state could be a final state
-            if len(set(next_state).intersection(self.finals)) > 0:
-                final_states.add(','.join(sorted(next_state)))
+        create_new_state(self.start)
 
-            dfa_transitions[transition] = ','.join(sorted(next_state))
-
-        # Add 'fuiken' and check for removable states
-        deleted = 1
-        while deleted > 0:
-            deleted = 0
-            for transition in dfa_transitions.copy().items():
-                for c in self.alphabet:
-                    # A char from the alphabet is missing, so we need to add a 'fuik'
-                    if (transition[0][0], c) not in dfa_transitions.keys():
-                        dfa_transitions[transition[0][0], c] = '{}'
-                        # if the fuik doesn't exist yet
-                        for ch in self.alphabet:
-                            dfa_transitions[('{}', ch)] = '{}'
-                    # Check if this state can be reached at all
-                    if (transition[0][0], c) in dfa_transitions.keys() \
-                            and transition[0][0] is not self.start \
-                            and not any(transition[0][0] == dfa_transitions[i]
-                                        and i[0] != transition[0][0] for i in dfa_transitions):
-                        del dfa_transitions[(transition[0][0], c)]
-                        deleted += 1
+        # Check if there is an fuik created
+        if any(dfa_transitions[i] == '{}' for i in dfa_transitions):
+            for char in self.alphabet:
+                dfa_transitions[('{}', char)] = '{}'
 
         return DFA(self.alphabet, dfa_transitions, start_state, final_states)
 

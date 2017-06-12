@@ -16,6 +16,7 @@ from Model import dfa_model_list, ndfa_model_list, ndfa_list, regex_model_list
 from Model import dfa_list
 from gui.create_dfa_dialog import Ui_create_dfa_dialog
 from gui.create_ndfa_dialog import Ui_create_ndfa_dialog
+from gui.create_regex_dialog import Ui_create_regex_dialog
 from gui.show_dfa_dialog import Ui_ShowDfa
 from gui.show_ndfa_dialog import Ui_ShowNdfa
 
@@ -193,6 +194,7 @@ class Ui_main_frame(object):
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_5.addItem(spacerItem5)
         self.regex_list = QtGui.QListView(self.REGEX_Widget)
+        self.regex_list.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.regex_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.regex_list.setObjectName(_fromUtf8("regex_list"))
         self.verticalLayout_5.addWidget(self.regex_list)
@@ -236,6 +238,7 @@ class Ui_main_frame(object):
         self.ndfa_new.setText(_translate("main_frame", "Create new", None))
         self.label_3.setText(_translate("main_frame", "REGEX", None))
         self.regex_new.setText(_translate("main_frame", "Create new", None))
+        self.regex_new.clicked.connect(Ui_create_regex_dialog)
 
         self.dfa_list.setModel(dfa_model_list)
         self.dfa_list.doubleClicked.connect(self.show_dfa)

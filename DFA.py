@@ -26,7 +26,10 @@ class DFA:
         """
         if char not in self.alphabet:
             raise ValueError("Character not in alphabet")
-        state = self.transitions[(state, char)]
+        if (state, char) in self.transitions:
+            state = self.transitions[(state, char)]
+        else:
+            raise ValueError("Can't find state")
         return state
 
     def get_tuple_string(self):
@@ -216,12 +219,14 @@ class DFA:
         for i in range(1, length):
             for combination in list(itertools.product(['a', 'b'], repeat=i)):
                 str_combination = ''.join(combination)
-                if self.accept(combination):
-                    accepted.append(str_combination)
-                else:
-                    not_accepted.append(str_combination)
+                try:
+                    if self.accept(combination):
+                        accepted.append(str_combination)
+                    else:
+                        not_accepted.append(str_combination)
+                except ValueError:
+                    return [], []
         return accepted, not_accepted
-
 
     def get_graph(self, name="output", current_state=None):
         """
