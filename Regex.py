@@ -142,10 +142,15 @@ class Regex:
         #}
         #int to str conversion
         new_transitions = {}
+        print (ndfa.transitions)
         for t in ndfa.transitions:
             new_transitions[(str(t[0]), t[1])] = [str(i) for i in ndfa.transitions[t]]
         ndfa.finals = [str(i) for i in ndfa.finals]
+        for symbol in alphabet:
+            for final in ndfa.finals:
+                new_transitions[(final, symbol)] = [final]
         ndfa = NDFA(ndfa.alphabet, new_transitions, [str(ndfa.start)], ndfa.finals)
+        print(ndfa.transitions)
         return ndfa
 
 
