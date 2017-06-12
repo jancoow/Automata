@@ -285,14 +285,70 @@ class DFA:
         """
         Generate dfa which ends with
         """
-        pass
+
+        transitions = {}
+
+        endstate = 0
+
+        startchar = ''
+        startcharEnabled = True
+
+        for i, char in enumerate(end):
+
+            if startchar is '':
+                startchar = char
+
+            transitions[(i, char)] = i + 1
+            for a in alphabet:
+                if a is not char:
+                    if startchar is not char and startcharEnabled:
+                        transitions[(i, a)] = i
+                        startcharEnabled = False
+                    else:
+                        transitions[(i, a)] = 0
+            endstate = i + 1
+
+        for char in alphabet:
+            transitions[(endstate, char)] = 0
+
+        print(transitions)
+
+        return DFA(alphabet, transitions, 0, [endstate])
 
     @staticmethod
     def dfa_contains(contains, alphabet):
         """
         Generate dfa which contains
         """
-        pass
+
+        transitions = {}
+
+        endstate = 0
+
+        startchar = ''
+        startcharEnabled = True
+
+        for i, char in enumerate(contains):
+
+            if startchar is '':
+                startchar = char
+
+            transitions[(i, char)] = i + 1
+            for a in alphabet:
+                if a is not char:
+                    if startchar is not char and startcharEnabled:
+                        transitions[(i, a)] = i
+                        startcharEnabled = False
+                    else:
+                        transitions[(i, a)] = 0
+            endstate = i + 1
+
+        for char in alphabet:
+            transitions[(endstate, char)] = endstate
+
+        print(transitions)
+
+        return DFA(alphabet, transitions, 0, [endstate])
 
 
 

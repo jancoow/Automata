@@ -174,11 +174,33 @@ class Ui_create_dfa_dialog(object):
 
         self.add_dfa_button.clicked.connect(self.create_dfa)
         self.pushButton.clicked.connect(self.generate_begins_with)
+        self.pushButton_2.clicked.connect(self.generate_ends_with)
+        self.pushButton_3.clicked.connect(self.generate_contains)
 
     def generate_begins_with(self):
         alphabet = self.dfa_alphabet.text().split(',')
         if alphabet[0] != '' and self.lineEdit.text() != '':
             dfa = DFA.dfa_begins_with(self.lineEdit.text(), alphabet)
+            dfa_list.append(dfa)
+            item = QStandardItem(dfa.get_tuple_string())
+            dfa_model_list.appendRow(item)
+            self.dialog.accept()
+
+    def generate_ends_with(self):
+        alphabet = self.dfa_alphabet.text().split(',')
+        input = self.lineEdit_2.text()
+        if alphabet[0] != '' and input != '':
+            dfa = DFA.dfa_ends_with(input, alphabet)
+            dfa_list.append(dfa)
+            item = QStandardItem(dfa.get_tuple_string())
+            dfa_model_list.appendRow(item)
+            self.dialog.accept()
+
+    def generate_contains(self):
+        alphabet = self.dfa_alphabet.text().split(',')
+        input = self.lineEdit_3.text()
+        if alphabet[0] != '' and input != '':
+            dfa = DFA.dfa_contains(input, alphabet)
             dfa_list.append(dfa)
             item = QStandardItem(dfa.get_tuple_string())
             dfa_model_list.appendRow(item)
