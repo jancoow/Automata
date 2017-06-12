@@ -13,7 +13,7 @@ class NDFA:
         """
         Accept string
         """
-        states = self.start
+        states = list(self.start)
         for char in str_input:
             states = self.accept_step(char, states)
         return set(states).intersection(self.finals)  # Check if one of the states are in final state
@@ -38,9 +38,9 @@ class NDFA:
         """
         Generate tuple string
         """
-        return "{ " + ', '.join(sorted(set([str(i[0]) for i in self.transitions]))) + "{A,B}, {" \
-               + ','.join(map(str, self.alphabet)) + "}, {δ}, "\
-               + str(self.start) + ", {"\
+        return "{ {" + ', '.join(sorted(set([str(i[0]) for i in self.transitions]))) + "}, {" \
+               + ','.join(map(str, self.alphabet)) + "}, {δ}, {"\
+               + ','.join(map(str, self.start)) + "}, {"\
                + ','.join(map(str, self.finals))\
                + "} }"
 

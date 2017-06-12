@@ -11,7 +11,8 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QStandardItem
 from PyQt4.QtGui import QStandardItemModel
 
-from Model import dfa_model_list, ndfa_model_list, ndfa_list
+from Regex import Regex
+from Model import dfa_model_list, ndfa_model_list, ndfa_list, regex_model_list
 from Model import dfa_list
 from gui.create_dfa_dialog import Ui_create_dfa_dialog
 from gui.create_ndfa_dialog import Ui_create_ndfa_dialog
@@ -240,12 +241,22 @@ class Ui_main_frame(object):
         self.dfa_list.doubleClicked.connect(self.show_dfa)
         self.ndfa_list.setModel(ndfa_model_list)
         self.ndfa_list.doubleClicked.connect(self.show_ndfa)
+        self.regex_list.setModel(regex_model_list)
+        self.regex_list.doubleClicked.connect(self.regex_to_dfa)
 
     def show_dfa(self, x):
         Ui_ShowDfa(dfa_list[dfa_model_list.itemFromIndex(x).row()])
 
     def show_ndfa(self, x):
         Ui_ShowNdfa(ndfa_list[ndfa_model_list.itemFromIndex(x).row()])
+
+    def regex_to_dfa(self, x):
+        regex_string = regex_model_list.itemFromIndex(x).text()
+        r = Regex(regex_string)
+        ndfa = r.to_ndfa()
+        ndfa_list.append(ndfa)
+        item = QStandardItem(ndfa.get_tuple_string())
+        ndfa_model_list.appendRow(item)
 
     def and_dfa(self):
         indexes = self.dfa_list.selectedIndexes()

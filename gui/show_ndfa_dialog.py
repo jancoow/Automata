@@ -178,7 +178,7 @@ class Ui_ShowNdfa(object):
         self.label_2.setText("Result: " + output + '\nExecution time: ' + str(round(ex_time * 1000, 4)) + " ms")
 
     def accept_input_step(self):
-        states = self.NDFA.start
+        states = list(self.NDFA.start)
         i = 1
         for char in self.lineEdit.text():
             states = self.NDFA.accept_step(char, states)

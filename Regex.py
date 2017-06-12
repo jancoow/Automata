@@ -1,4 +1,6 @@
 from NDFA import NDFA
+
+
 class Regex:
     def __init__(self, regex):
         self.regex = regex
@@ -108,7 +110,7 @@ class Regex:
                     else:
                         ndfa.transitions[temp_transition] = temptransitions[temp_transition]
 
-                ndfa = NDFA(alphabet,ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
+                ndfa = NDFA(alphabet, ndfa.transitions, ndfa.start, [ndfa.finals[0] + 1])
         #transitions = {
             # (0, 'a'): [0, 1],
             # (1, 'b'): [0],
@@ -116,8 +118,12 @@ class Regex:
             # (1, 'b'): [1],
             # (0, '$'): [1],
         #}
-
-        print(transitions)
+        #int to str conversion
+        new_transitions = {}
+        for t in ndfa.transitions:
+            new_transitions[(str(t[0]), t[1])] = [str(i) for i in ndfa.transitions[t]]
+        ndfa.finals = [str(i) for i in ndfa.finals]
+        ndfa = NDFA(ndfa.alphabet, new_transitions, [str(ndfa.start)], ndfa.finals)
         return ndfa
 
 

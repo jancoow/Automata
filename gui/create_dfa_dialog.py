@@ -176,11 +176,13 @@ class Ui_create_dfa_dialog(object):
         self.pushButton.clicked.connect(self.generate_begins_with)
 
     def generate_begins_with(self):
-        dfa = DFA.dfa_begins_with(self.lineEdit.text(), self.dfa_alphabet.text().split(','))
-        dfa_list.append(dfa)
-        item = QStandardItem(dfa.get_tuple_string())
-        dfa_model_list.appendRow(item)
-        self.dialog.accept()
+        alphabet = self.dfa_alphabet.text().split(',')
+        if alphabet[0] != '' and self.lineEdit.text() != '':
+            dfa = DFA.dfa_begins_with(self.lineEdit.text(), alphabet)
+            dfa_list.append(dfa)
+            item = QStandardItem(dfa.get_tuple_string())
+            dfa_model_list.appendRow(item)
+            self.dialog.accept()
 
     def create_dfa(self):
         alphabet = self.dfa_alphabet.text().split(',')
