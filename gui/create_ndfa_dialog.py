@@ -38,7 +38,7 @@ class Ui_create_ndfa_dialog(object):
     def setupUi(self, create_ndfa_dialog):
         create_ndfa_dialog.setObjectName(_fromUtf8("create_ndfa_dialog"))
         create_ndfa_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        create_ndfa_dialog.resize(785, 354)
+        create_ndfa_dialog.resize(781, 518)
         create_ndfa_dialog.setMinimumSize(QtCore.QSize(600, 300))
         create_ndfa_dialog.setSizeGripEnabled(False)
         create_ndfa_dialog.setModal(True)
@@ -96,6 +96,22 @@ class Ui_create_ndfa_dialog(object):
         self.add_dfa_button = QtGui.QPushButton(create_ndfa_dialog)
         self.add_dfa_button.setObjectName(_fromUtf8("add_dfa_button"))
         self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.add_dfa_button)
+        self.label_5 = QtGui.QLabel(create_ndfa_dialog)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_5)
+        self.widget = QtGui.QWidget(create_ndfa_dialog)
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setSpacing(9)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.plainTextEdit = QtGui.QPlainTextEdit(self.widget)
+        self.plainTextEdit.setObjectName(_fromUtf8("plainTextEdit"))
+        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.pushButton = QtGui.QPushButton(self.widget)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.verticalLayout.addWidget(self.pushButton)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.widget)
 
         self.retranslateUi(create_ndfa_dialog)
         QtCore.QMetaObject.connectSlotsByName(create_ndfa_dialog)
@@ -116,8 +132,45 @@ class Ui_create_ndfa_dialog(object):
         item = self.dfa_transitions.horizontalHeaderItem(2)
         item.setText(_translate("create_ndfa_dialog", "Next state(s)", None))
         self.add_dfa_button.setText(_translate("create_ndfa_dialog", "Add new NDFA", None))
+        self.label_5.setText(_translate("create_ndfa_dialog", "Grammar", None))
+        self.plainTextEdit.setPlainText(_translate("create_ndfa_dialog", "S=aA|aB\n"
+                                                                         "A=bS|b\n"
+                                                                         "", None))
+        self.pushButton.setText(_translate("create_ndfa_dialog", "Create NDFA", None))
 
         self.add_dfa_button.clicked.connect(self.create_ndfa)
+        self.pushButton.clicked.connect(self.grammer_ndfa)
+
+    def grammer_ndfa(self):
+
+        transitions = {}
+        finals = []
+        alphabet = []
+        start = 'S'
+
+        input = self.plainTextEdit.toPlainText()
+        grammar_lines = input.split('\n')
+        for line in grammar_lines:
+            if '=' in line:
+                values = line.split('=')
+                paths = values[1].split('|')
+                for path in paths:
+                    if path[0] not in alphabet:
+                        alphabet.append(path[0])
+                    if len(path) > 1:
+                        transitions[(values[0], path[0])] = path[1]
+                    else:
+                        transitions[(values[0], path[0])] = values[0]
+                        finals.append(values[0])
+
+
+        if alphabet[0] != '' and start != '' and finals[0] != '' and transitions != {}:
+            ndfa = NDFA(alphabet, transitions, start, finals)
+            ndfa_list.append(ndfa)
+            item = QStandardItem(ndfa.get_tuple_string())
+
+            ndfa_model_list.appendRow(item)
+            self.dialog.accept()
 
     def create_ndfa(self):
         alphabet = self.dfa_alphabet.text().split(',')
