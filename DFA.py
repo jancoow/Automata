@@ -217,7 +217,7 @@ class DFA:
         accepted = []
         not_accepted = []
         for i in range(1, length):
-            for combination in list(itertools.product(['a', 'b'], repeat=i)):
+            for combination in list(itertools.product(self.alphabet, repeat=i)):
                 str_combination = ''.join(combination)
                 try:
                     if self.accept(combination):
