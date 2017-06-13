@@ -274,16 +274,16 @@ class DFA:
         transitions = {}
 
         for i, char in enumerate(begin):
-            transitions[(i, char)] = i + 1
+            transitions[(str(i), char)] = str(i + 1)
             for a in alphabet:  # For other chars in alphabet add transition to fuik
                 if a is not char:
-                    transitions[(i, a)] = '{}'
+                    transitions[(str(i), a)] = '{}'
 
         for char in alphabet:
             transitions[('{}', char)] = '{}'
-            transitions[(len(begin), char)] = len(begin)
+            transitions[(str(len(begin)), char)] = str(len(begin))
 
-        return DFA(alphabet, transitions, 0, [len(begin)])
+        return DFA(alphabet, transitions, '0', [str(len(begin))])
 
     @staticmethod
     def dfa_ends_with(end, alphabet):
@@ -303,22 +303,20 @@ class DFA:
             if startchar is '':
                 startchar = char
 
-            transitions[(i, char)] = i + 1
+            transitions[(str(i), char)] = str(i + 1)
             for a in alphabet:
                 if a is not char:
                     if startchar is not char and startcharEnabled:
-                        transitions[(i, a)] = i
+                        transitions[(str(i), a)] = str(i)
                         startcharEnabled = False
                     else:
-                        transitions[(i, a)] = 0
+                        transitions[(str(i), a)] = '0'
             endstate = i + 1
 
         for char in alphabet:
-            transitions[(endstate, char)] = 0
+            transitions[(str(endstate), char)] = '0'
 
-        print(transitions)
-
-        return DFA(alphabet, transitions, 0, [endstate])
+        return DFA(alphabet, transitions, '0', [str(endstate)])
 
     @staticmethod
     def dfa_contains(contains, alphabet):
@@ -338,22 +336,20 @@ class DFA:
             if startchar is '':
                 startchar = char
 
-            transitions[(i, char)] = i + 1
+            transitions[(str(i), char)] = str(i + 1)
             for a in alphabet:
                 if a is not char:
                     if startchar is not char and startcharEnabled:
-                        transitions[(i, a)] = i
+                        transitions[(str(i), a)] = str(i)
                         startcharEnabled = False
                     else:
-                        transitions[(i, a)] = 0
+                        transitions[(str(i), a)] = '0'
             endstate = i + 1
 
         for char in alphabet:
-            transitions[(endstate, char)] = endstate
+            transitions[(str(endstate), char)] = str(endstate)
 
-        print(transitions)
-
-        return DFA(alphabet, transitions, 0, [endstate])
+        return DFA(alphabet, transitions, '0', [str(endstate)])
 
 
 
